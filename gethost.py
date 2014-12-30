@@ -3,7 +3,7 @@
 # @Author: LiSnB
 # @Date:   2014-09-04 09:09:54
 # @Last Modified by:   LiSnB
-# @Last Modified time: 2014-12-29 16:39:29
+# @Last Modified time: 2014-12-30 14:38:21
 # @Email: lisnb.h@gmail.com
 
 """
@@ -14,11 +14,14 @@
 import datetime
 import sys
 import shutil
+import platform
+import os
 
 
-def merge(src,static='./static'):
+def merge(src,static='./static',backup=True):
 	timestamp = datetime.datetime.now().strftime('%m-%d')
-	host = './hosts-%s-%s'%(src,timestamp)
+	#host = './hosts-%s-%s'%(src,timestamp)
+	host = src
 	with open (host,'rb') as f:
 		phosts = f.read()
 	with open (static,'rb') as f:
@@ -26,10 +29,10 @@ def merge(src,static='./static'):
 	with open ('./hosts','wb') as f:
 		f.write(shosts)
 		f.write(phosts)
-	shutil.copy('C:\\Windows\\System32\\drivers\\etc\\hosts','C:\\Windows\\System32\\drivers\\etc\\hosts-%s'%timestamp)
-	shutil.copy('./hosts','C:\\Windows\\System32\\drivers\\etc\\hosts')
-
-
+	hostfile = '/etc/hosts' if platform.system() == 'darwin' else 'C:\\Windows\\System32\\drivers\\etc\\hosts'
+	if backup:
+		shutil.copy(hostfile,hostfile+'-'+timestamp)
+	shutil.copy('./hosts',hostfile)
 
 
 
